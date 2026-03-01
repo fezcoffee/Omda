@@ -1,0 +1,40 @@
+{
+  "name": "omda-catering",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.2",
+    "clsx": "^2.1.0",
+    "date-fns": "^3.6.0",
+    "docxtemplater": "^3.47.3",
+    "lucide-react": "^0.363.0",
+    "next": "^16.1.6",
+    "pizzip": "^3.1.6",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "twilio": "^5.0.3",
+    "uuid": "^9.0.1",
+    "xero-node": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "prisma": "^5.10.2",
+    "tailwindcss": "^3.3.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5"
+  }
+}

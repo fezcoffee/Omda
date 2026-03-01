@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  company   String?
+  email     String
+  phone     String?
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events    Event[]
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  clientId    String
+  client      Client      @relation(fields: [clientId], references: [id])
+  eventDate   DateTime?
+  venue       String?
+  guestCount  Int?
+  serviceType String?
+  packageInfo String?
+  notes       String?
+  status      String      @default("ACTIVE") // ACTIVE | COMPLETED | CANCELLED
+  currentStep Int         @default(1)
+  steps       EventStep[]
+  checklists  Checklist[]
+  documents   Document[]
+  messages    Message[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model EventStep {
+  id          String    @id @default(cuid())
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  stepNumber  Int
+  stepType    String
+  status      String    @default("LOCKED") // LOCKED | ACTIVE | COMPLETE
+  completedAt DateTime?
+  notes       String?
+  metadata    String?   // JSON string for step-specific data
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([eventId, stepNumber])
+}
+
+model Checklist {
+  id        String          @id @default(cuid())
+  eventId   String
+  event     Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type      String          // WAREHOUSE | DRIVER
+  sentAt    DateTime?
+  sentTo    String?
+  sentVia   String?         // WHATSAPP | SMS
+  items     ChecklistItem[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model ChecklistItem {
+  id          String    @id @default(cuid())
+  checklistId String
+  checklist   Checklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  text        String
+  quantity    String?
+  checked     Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type      String   // CONTRACT | CONCIERGE_BRIEF | EVENT_BRIEF | INVOICE
+  fileName  String
+  filePath  String?
+  sentAt    DateTime?
+  sentTo    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  eventId    String?
+  event      Event?   @relation(fields: [eventId], references: [id])
+  type       String   // WHATSAPP | SMS
+  recipient  String
+  body       String
+  status     String   @default("PENDING") // PENDING | SENT | FAILED
+  twilioSid  String?
+  sentAt     DateTime @default(now())
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
